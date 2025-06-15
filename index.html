@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #72c2d9 0%, #a8e6cf 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: #2c5f4a;
+            font-size: 3.5rem;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .balance-section {
+            text-align: center;
+        }
+
+        .balance-title {
+            color: #2c5f4a;
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .balance-amount {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: #2c5f4a;
+            margin-bottom: 8px;
+        }
+
+        .balance-amount.negative {
+            color: #e74c3c;
+        }
+
+        .balance-amount.positive {
+            color: #27ae60;
+        }
+
+        .form-section h2 {
+            color: #2c5f4a;
+            font-size: 1.9rem;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .form-grid {
+            display: grid;
+            gap: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            color: #2c5f4a;
+            font-weight: 600;
+            margin-bottom: 6px;
+            font-size: 1.5rem;
+        }
+
+        input,
+        select {
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #72c2d9;
+            box-shadow: 0 0 0 3px rgba(114, 194, 217, 0.1);
+        }
+
+        .btn {
+            padding: 14px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #2c5f4a 0%, #27ae60 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(44, 95, 74, 0.3);
+        }
+
+        .btn-edit {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            padding: 8px 16px;
+            font-size: 1rem;
+            margin-right: 8px;
+        }
+
+        .btn-delete {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            padding: 8px 16px;
+            font-size: 0.85rem;
+        }
+
+        .btn-edit:hover,
+        .btn-delete:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .history-section h2 {
+            color: #2c5f4a;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .transaction-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .transaction-item {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            gap: 16px;
+            align-items: center;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 12px;
+            border-left: 4px solid #ddd;
+            transition: all 0.3s ease;
+        }
+
+        .transaction-item:hover {
+            transform: translateX(4px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .transaction-item.income {
+            border-left-color: #27ae60;
+            background: linear-gradient(135deg, rgba(39, 174, 96, 0.1) 0%, rgba(39, 174, 96, 0.05) 100%);
+        }
+
+        .transaction-item.expense {
+            border-left-color: #e74c3c;
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.1) 0%, rgba(231, 76, 60, 0.05) 100%);
+        }
+
+        .transaction-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .transaction-description {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 1.5rem;
+        }
+
+        .transaction-date {
+            color: #7f8c8d;
+            font-size: 0.20rem;
+        }
+
+        .transaction-amount {
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+
+        .transaction-amount.income {
+            color: #27ae60;
+        }
+
+        .transaction-amount.expense {
+            color: #e74c3c;
+        }
+
+        .transaction-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+
+        .error-message {
+            background: #fee;
+            color: #c33;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 16px;
+            border: 1px solid #fcc;
+            display: none;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 90%;
+            max-width: 500px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            color: #2c5f4a;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #999;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-btn:hover {
+            color: #666;
+        }
+
+        /* Mobile-first responsive design */
+        @media (min-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .form-group:nth-child(1) {
+                grid-column: 1 / -1;
+            }
+
+            .btn {
+                grid-column: 1 / -1;
+            }
+
+            .transaction-item {
+                grid-template-columns: 1fr auto auto;
+            }
+        }
+
+        @media (max-width: 767px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .balance-amount {
+                font-size: 2rem;
+            }
+
+            .transaction-item {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .transaction-actions {
+                justify-self: stretch;
+            }
+
+            .btn-edit,
+            .btn-delete {
+                flex: 1;
+            }
+        }
+
+        /* Extra small devices (phones, < 480px) */
+        @media (max-width: 479px) {
+            h1 {
+                font-size: 1.6rem;
+            }
+
+            .balance-amount {
+                font-size: 1.8rem;
+            }
+
+            label {
+                font-size: 1.2rem;
+            }
+
+            input,
+            select {
+                font-size: 1.4rem;
+            }
+
+            .btn {
+                font-size: 1.2rem;
+                padding: 10px 16px;
+            }
+
+            .transaction-description {
+                font-size: 1.3rem;
+            }
+
+            .transaction-amount {
+                font-size: 1.3rem;
+            }
+
+            .modal-content {
+                padding: 16px;
+                width: 95%;
+            }
+        }
+
+        /* Tablets (480px - 767px) — already covered well, minor adjustments */
+        @media (min-width: 480px) and (max-width: 767px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            input,
+            select {
+                font-size: 1.6rem;
+            }
+
+            .btn {
+                font-size: 1.4rem;
+            }
+
+            .transaction-item {
+                grid-template-columns: 1fr;
+            }
+
+            .transaction-actions {
+                flex-direction: row;
+                justify-content: space-between;
+            }
+        }
+
+        /* Medium devices (768px - 1023px) — tablets and small laptops */
+        @media (min-width: 768px) and (max-width: 1023px) {
+            h1 {
+                font-size: 3rem;
+            }
+
+            .balance-amount {
+                font-size: 2.8rem;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .transaction-item {
+                grid-template-columns: 1fr auto auto;
+            }
+
+            .transaction-description {
+                font-size: 1.6rem;
+            }
+        }
+
+        /* Large devices (1024px - 1439px) */
+        @media (min-width: 1024px) and (max-width: 1439px) {
+            .container {
+                max-width: 900px;
+            }
+
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            .form-grid {
+                gap: 20px;
+            }
+        }
+
+        /* Extra large devices (1440px and above) */
+        @media (min-width: 1440px) {
+            .container {
+                max-width: 1000px;
+            }
+
+            h1 {
+                font-size: 3rem;
+            }
+
+            .balance-amount {
+                font-size: 2.5rem;
+            }
+
+            .form-grid {
+                gap: 20px;
+            }
+
+            .transaction-description {
+                font-size: 1.2rem;
+            }
+
+            .transaction-amount {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>Expense Tracker</h1>
+        </header>
+
+        <main>
+            <!-- Balance Section -->
+            <section class="card balance-section">
+                <h2 class="balance-title">Current Balance</h2>
+                <div class="balance-amount" id="balance">0.00 RWF</div>
+            </section>
+
+            <!-- Add Transaction Form -->
+            <section class="card form-section">
+                <h2>Add New Transaction</h2>
+                <div class="error-message" id="error-message"></div>
+                <form id="transaction-form">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="description">Description</label>
+                            <input type="text" id="description" name="description" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="amount">Amount (RWF)</label>
+                            <input type="number" id="amount" name="amount" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="type">Type</label>
+                            <select id="type" name="type" required>
+                                <option value="expense">Expense (-)</option>
+                                <option value="income">Income (+)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="date">Date</label>
+                            <input type="date" id="date" name="date" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Transaction</button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Transaction History -->
+            <section class="card history-section">
+                <h2>Transaction History <span id="transaction-count">(0 transactions)</span></h2>
+                <div class="transaction-list" id="transaction-list">
+                    <div class="empty-state">
+                        No transactions yet. Add your first transaction above!
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Edit Transaction</h3>
+                <button class="close-btn" onclick="closeEditModal()">&times;</button>
+            </div>
+            <div class="error-message" id="edit-error-message"></div>
+            <form id="edit-form">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="edit-description">Description</label>
+                        <input type="text" id="edit-description" name="description" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-amount">Amount (RWF)</label>
+                        <input type="number" id="edit-amount" name="amount" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-type">Type</label>
+                        <select id="edit-type" name="type" required>
+                            <option value="expense">Expense (-)</option>
+                            <option value="income">Income (+)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-date">Date</label>
+                        <input type="date" id="edit-date" name="date" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update Transaction</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // In-memory storage for transactions (replaces localStorage)
+        let transactions = [];
+        let editingTransactionId = null;
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', function () {
+            // Set today's date as default
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('date').value = today;
+            document.getElementById('edit-date').value = today;
+
+            updateDisplay();
+
+            // Form submission handlers
+            document.getElementById('transaction-form').addEventListener('submit', handleAddTransaction);
+            document.getElementById('edit-form').addEventListener('submit', handleEditTransaction);
+
+            // Modal click outside to close
+            document.getElementById('edit-modal').addEventListener('click', function (e) {
+                if (e.target === this) {
+                    closeEditModal();
+                }
+            });
+        });
+
+        function handleAddTransaction(e) {
+            e.preventDefault();
+
+            const formData = new FormData(e.target);
+            const transaction = {
+                id: Date.now(),
+                description: formData.get('description').trim(),
+                amount: parseFloat(formData.get('amount')),
+                type: formData.get('type'),
+                date: formData.get('date')
+            };
+
+            // Validation
+            if (!validateTransaction(transaction)) {
+                return;
+            }
+
+            // Add transaction
+            transactions.push(transaction);
+
+            // Reset form and update display
+            e.target.reset();
+            document.getElementById('date').value = new Date().toISOString().split('T')[0];
+            hideError();
+            updateDisplay();
+        }
+
+        function handleEditTransaction(e) {
+            e.preventDefault();
+
+            const formData = new FormData(e.target);
+            const updatedTransaction = {
+                id: editingTransactionId,
+                description: formData.get('description').trim(),
+                amount: parseFloat(formData.get('amount')),
+                type: formData.get('type'),
+                date: formData.get('date')
+            };
+
+            // Validation
+            if (!validateTransaction(updatedTransaction, true)) {
+                return;
+            }
+
+            // Update transaction
+            const index = transactions.findIndex(t => t.id === editingTransactionId);
+            if (index !== -1) {
+                transactions[index] = updatedTransaction;
+                closeEditModal();
+                updateDisplay();
+            }
+        }
+
+        function validateTransaction(transaction, isEdit = false) {
+            const errorElement = isEdit ? document.getElementById('edit-error-message') : document.getElementById('error-message');
+
+            if (!transaction.description) {
+                showError('Description is required', errorElement);
+                return false;
+            }
+
+            if (!transaction.amount || transaction.amount <= 0) {
+                showError('Amount must be greater than 0', errorElement);
+                return false;
+            }
+
+            if (!transaction.type) {
+                showError('Transaction type is required', errorElement);
+                return false;
+            }
+
+            if (!transaction.date) {
+                showError('Date is required', errorElement);
+                return false;
+            }
+
+            hideError(errorElement);
+            return true;
+        }
+
+        function showError(message, element = null) {
+            const errorElement = element || document.getElementById('error-message');
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+        }
+
+        function hideError(element = null) {
+            const errorElement = element || document.getElementById('error-message');
+            errorElement.style.display = 'none';
+        }
+
+        function updateDisplay() {
+            updateBalance();
+            updateTransactionList();
+            updateTransactionCount();
+        }
+
+        function updateBalance() {
+            const balance = transactions.reduce((total, transaction) => {
+                return transaction.type === 'income'
+                    ? total + transaction.amount
+                    : total - transaction.amount;
+            }, 0);
+
+            const balanceElement = document.getElementById('balance');
+            balanceElement.textContent = `${balance.toFixed(2)} RWF`;
+
+            // Update balance color
+            balanceElement.className = 'balance-amount';
+            if (balance > 0) {
+                balanceElement.classList.add('positive');
+            } else if (balance < 0) {
+                balanceElement.classList.add('negative');
+            }
+        }
+
+        function updateTransactionList() {
+            const listElement = document.getElementById('transaction-list');
+
+            if (transactions.length === 0) {
+                listElement.innerHTML = '<div class="empty-state">No transactions yet. Add your first transaction above!</div>';
+                return;
+            }
+
+            // Sort transactions by date (newest first)
+            const sortedTransactions = [...transactions].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            listElement.innerHTML = sortedTransactions.map(transaction => `
+                <div class="transaction-item ${transaction.type}">
+                    <div class="transaction-info">
+                        <div class="transaction-description">${escapeHtml(transaction.description)}</div>
+                        <div class="transaction-date">${formatDate(transaction.date)}</div>
+                    </div>
+                    <div class="transaction-amount ${transaction.type}">
+                        ${transaction.type === 'income' ? '+' : '-'}${transaction.amount.toFixed(2)} RWF
+                    </div>
+                    <div class="transaction-actions">
+                        <button class="btn btn-edit" onclick="openEditModal(${transaction.id})">Edit</button>
+                        <button class="btn btn-delete" onclick="deleteTransaction(${transaction.id})">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateTransactionCount() {
+            const countElement = document.getElementById('transaction-count');
+            const count = transactions.length;
+            countElement.textContent = `(${count} transaction${count !== 1 ? 's' : ''})`;
+        }
+
+        function openEditModal(transactionId) {
+            const transaction = transactions.find(t => t.id === transactionId);
+            if (!transaction) return;
+
+            editingTransactionId = transactionId;
+
+            // Populate form
+            document.getElementById('edit-description').value = transaction.description;
+            document.getElementById('edit-amount').value = transaction.amount;
+            document.getElementById('edit-type').value = transaction.type;
+            document.getElementById('edit-date').value = transaction.date;
+
+            // Show modal
+            document.getElementById('edit-modal').style.display = 'block';
+            hideError(document.getElementById('edit-error-message'));
+        }
+
+        function closeEditModal() {
+            document.getElementById('edit-modal').style.display = 'none';
+            editingTransactionId = null;
+            document.getElementById('edit-form').reset();
+            hideError(document.getElementById('edit-error-message'));
+        }
+
+        function deleteTransaction(transactionId) {
+            if (confirm('Are you sure you want to delete this transaction?')) {
+                transactions = transactions.filter(t => t.id !== transactionId);
+                updateDisplay();
+            }
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+
+
+    </script>
+</body>
+
+</html>

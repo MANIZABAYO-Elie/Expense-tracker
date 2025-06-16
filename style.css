@@ -54,7 +54,9 @@ header h1 {
   gap: 1rem;
 }
 
-input, select, button {
+input,
+select,
+button {
   padding: 0.75rem;
   border-radius: 6px;
   border: 1px solid #ccc;
@@ -66,7 +68,7 @@ button {
   color: white;
   font-weight: bold;
   cursor: pointer;
-  transition: background 0.3s ease;
+
 }
 
 button:hover {
@@ -108,7 +110,7 @@ footer {
   margin-top: auto;
   text-align: center;
   padding: 1rem 0;
-  font-size: 0.9rem;
+  font-size: 1.5rem;
   color: #444;
 }
 
@@ -121,7 +123,9 @@ footer {
     gap: 1rem;
   }
 
-  input, select, button {
+  input,
+  select,
+  button {
     font-size: 0.95rem;
   }
 

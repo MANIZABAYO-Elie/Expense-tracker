@@ -2,14 +2,14 @@
 let transactions = [];
 let editingTransactionId = null;
 
-// Initialize the app
+// Initializing  the app
 document.addEventListener('DOMContentLoaded', function () {
-    // Load from localStorage
+    // Loading  from localStorage
     const saved = localStorage.getItem('transactions');
     if (saved) {
         transactions = JSON.parse(saved);
     }
-
+   
     // Set today’s date as default
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('date').value = today;
@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     updateDisplay();
 
-    // Form submission handlers
+    // handling form submission
     document.getElementById('transaction-form').addEventListener('submit', handleAddTransaction);
     document.getElementById('edit-form').addEventListener('submit', handleEditTransaction);
 
